@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-//using UnityEngine.XR.Interaction.Toolkit.AffordanceSystem.Theme.Primitives;
 
 public class MonsterAI : MonoBehaviour
 {
@@ -18,6 +17,10 @@ public class MonsterAI : MonoBehaviour
     private Transform Last_Point;
     private bool Check_LastPoint;
     float i_stay;
+    float DistPlayer;
+    float Patch_dist;
+    float PointDist;
+
 
     private void Start()
     {
@@ -34,7 +37,7 @@ public class MonsterAI : MonoBehaviour
                 AI_Monster.Resume();
                 gameObject.GetComponent<Animator>().SetBool("isPatrolling", true);
                 AI_Monster.SetDestination(WayPoints[Current_Patch].transform.position);
-                float Patch_dist = Vector3.Distance(WayPoints[Current_Patch].transform.position, gameObject.transform.position);
+                Patch_dist = Vector3.Distance(WayPoints[Current_Patch].transform.position, gameObject.transform.position);
                 if (Patch_dist < 2)
                 {
                     Current_Patch++;
@@ -49,13 +52,13 @@ public class MonsterAI : MonoBehaviour
             if (AI_Enemy == AI_State.Chase)
             {
                 AI_Monster.Resume();
-                gameObject.GetComponent<Animator>().SetBool("isPatrolling", false);
                 gameObject.GetComponent<Animator>().SetBool("isChasing", true);
-
                 if (gameObject.GetComponent<FieldOfView>().canSeePlayer == false)
                 {
                     Last_Point = Player.transform;
                     Check_LastPoint = true;
+                    gameObject.GetComponent<Animator>().SetBool("isChasing", false);
+
                 }
                 else
                     AI_Monster.SetDestination(Player.transform.position);
@@ -65,7 +68,7 @@ public class MonsterAI : MonoBehaviour
         {
             AI_Monster.Resume();
             i_stay += 1 * Time.deltaTime;
-            float PointDist = Vector3.Distance(Last_Point.transform.position, gameObject.transform.position);
+            PointDist = Vector3.Distance(Last_Point.transform.position, gameObject.transform.position);
             if (PointDist < 1 || i_stay >= 7)
             {
                 Check_LastPoint = false;
@@ -75,7 +78,7 @@ public class MonsterAI : MonoBehaviour
             else            
                 gameObject.GetComponent<Animator>().SetBool("isPatrolling", true);
         }
-        float DistPlayer = Vector3.Distance(Player.transform.position, gameObject.transform.position);
+        DistPlayer = Vector3.Distance(Player.transform.position, gameObject.transform.position);
         if (DistPlayer < 2)
         {
             Player.SetActive(false);

@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using Unity.XR.CoreUtils;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class FieldOfView : MonoBehaviour
 {
@@ -22,7 +24,7 @@ public class FieldOfView : MonoBehaviour
 
     public IEnumerator FOVRoutine()
     {
-        WaitForSeconds wait = new (0.2f);
+        WaitForSeconds wait = new WaitForSeconds(0.2f);
 
         while (true)
         {
@@ -34,8 +36,8 @@ public class FieldOfView : MonoBehaviour
 
     private void FieldOfViewCheck()
     {
-        Collider[] rangeChecks = Physics.OverlapSphere(transform.position, radius, targetMask);
-
+            Collider[] rangeChecks = Physics.OverlapSphere(transform.position, radius, targetMask);
+       
         if (rangeChecks.Length != 0)
         {
             Transform target = rangeChecks[0].transform;
@@ -46,12 +48,11 @@ public class FieldOfView : MonoBehaviour
                 float distanceToTarget = Vector3.Distance(transform.position, target.position);
                 if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
                     canSeePlayer = true;
-                //else if (playerRef.GetComponent</*Название класса управления ГГ */>().Sprint == true)
-                //    canSeePlayer = true;
-                else
-                {
+                else if (playerRef.GetComponent<VRMovement>().Sprint == true)
+                    canSeePlayer = true;
+                else                
                     canSeePlayer = false;
-                }
+                
 
             }
             else
@@ -66,9 +67,6 @@ public class FieldOfView : MonoBehaviour
     {
         if (canSeePlayer == true)
             gameObject.GetComponent<MonsterAI>().AI_Enemy = MonsterAI.AI_State.Chase;
-        else
-            gameObject.GetComponent<MonsterAI>().AI_Enemy = MonsterAI.AI_State.Patrol;
-
     }
 }
 
